@@ -1,42 +1,55 @@
-console.log("Website Loaded");
-const adjectives = [
-    "happy",
-    "angry",
-    "tiny",
-    "purple",
-    "fluffy"
-];
+const sentence = [];
+function drawSentence(){
 
-const nouns = [
-    "dog",
-    "dragon",
-    "banana",
-    "robot",
-    "pirate"
-];
+    const area = document.getElementById("sentence");
 
-const verbs = [
-    "eat",
-    "throw",
-    "hug",
-    "kick",
-    "admire"
-];
+    area.innerHTML = "";
 
-const button = document.getElementById("generateButton");
+    sentence.forEach(function(block){
 
-button.addEventListener("click", function () {
+        const div = document.createElement("div");
 
-    const adjective =
-        adjectives[Math.floor(Math.random() * adjectives.length)];
+        div.className = "block";
 
-    const noun =
-        nouns[Math.floor(Math.random() * nouns.length)];
+        if(block.type=="text"){
 
-    const verb =
-        verbs[Math.floor(Math.random() * verbs.length)];
+            div.classList.add("textBlock");
 
-    document.getElementById("output").textContent =
-        `The ${adjective} ${noun} likes to ${verb}.`;
+            div.textContent = block.value;
 
+        }
+
+        else{
+
+            div.textContent = "["+block.type+"]";
+
+        }
+
+        area.appendChild(div);
+
+    });
+
+}
+sentence.push({
+    type:"text",
+    value:"The"
 });
+
+sentence.push({
+    type:"adjective"
+});
+
+sentence.push({
+    type:"noun"
+});
+
+sentence.push({
+    type:"text",
+    value:"likes to"
+});
+
+sentence.push({
+    type:"verb"
+});
+
+drawSentence();
