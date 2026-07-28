@@ -1,9 +1,29 @@
 body{
     font-family:Arial;
-    text-align:center;
-    margin-top:50px;
+    margin:40px;
 }
 
-h1{
-    color:steelblue;
+.tool{
+    padding:10px;
+    margin:5px;
+    cursor:pointer;
+}
+
+#sentence{
+    min-height:80px;
+    border:2px dashed gray;
+    padding:10px;
+}
+
+.block{
+    display:inline-block;
+    padding:8px;
+    margin:5px;
+    border-radius:5px;
+    background:#dddddd;
+}
+
+.textBlock{
+    background:#ffffff;
+    border:1px solid black;
 }
