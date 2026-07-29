@@ -21,6 +21,11 @@ body{
     margin:5px;
     border-radius:5px;
     background:#dddddd;
+    cursor:grab;
+}
+
+.block:active{
+    cursor:grabbing;
 }
 
 .textBlock{
