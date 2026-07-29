@@ -45,6 +45,23 @@ body{
     cursor:grabbing;
 }
 
+.dropIndicator{
+
+    display:inline-block;
+
+    width:4px;
+
+    height:36px;
+
+    background:#2196f3;
+
+    border-radius:2px;
+
+    vertical-align:middle;
+
+    margin:4px;
+
+}
 .textBlock{
     background:#ffffff;
     border:1px solid black;
