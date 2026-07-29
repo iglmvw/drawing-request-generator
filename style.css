@@ -16,12 +16,29 @@ body{
 }
 
 .block{
+
     display:inline-block;
-    padding:8px;
+
+    padding:8px 12px;
+
     margin:5px;
-    border-radius:5px;
+
+    border-radius:6px;
+
     background:#dddddd;
+
     cursor:grab;
+
+    user-select:none;
+
+    transition:
+        transform .15s;
+}
+
+.block:hover{
+
+    transform:scale(1.05);
+
 }
 
 .block:active{
