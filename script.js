@@ -13,6 +13,10 @@ let nextBlockID = 1;
 
 let draggedBlockID = null;
 
+let draggedToolType = null;
+
+let dragSource = null;
+
 let dragGhost = null;
 
 let isDragging = false;
@@ -239,6 +243,48 @@ function hideDropIndicator() {
 // DRAGGING
 // =====================================================
 
+function startToolDragging(event, type, originalElement) {
+
+    event.preventDefault();
+
+    draggedToolType = type;
+
+    dragSource = "toolbox";
+
+    isDragging = true;
+
+    dropIndex = null;
+
+    isOverDeleteZone = false;
+
+
+    // Create ghost
+
+    dragGhost =
+        originalElement.cloneNode(true);
+
+    dragGhost.classList.add(
+        "dragGhost"
+    );
+
+    document.body.appendChild(
+        dragGhost
+    );
+
+
+    // Move ghost
+
+    moveGhost(event);
+
+
+    // Prevent selecting text
+
+    document.body.style.userSelect =
+        "none";
+
+}
+
+
 function startDragging(
     event,
     blockID,
@@ -250,6 +296,8 @@ function startDragging(
 
     draggedBlockID = blockID;
 
+    dragSource = "sentence";
+    
     isDragging = true;
 
     dropIndex = null;
@@ -448,11 +496,12 @@ function updateDropLocation(event) {
         // Don't use the block being dragged
 
         if (
+            dragSource === "sentence" &&
             blockID === draggedBlockID
         ) {
-
+        
             continue;
-
+        
         }
 
 
@@ -507,18 +556,20 @@ function finishDragging() {
             "deleteZone"
         );
 
-
     const sentenceArea =
         document.getElementById(
             "sentence"
         );
 
 
-    // ---------------------------------------------
+    // =============================================
     // DELETE
-    // ---------------------------------------------
+    // =============================================
 
-    if (isOverDeleteZone) {
+    if (
+        dragSource === "sentence" &&
+        isOverDeleteZone
+    ) {
 
         const index =
             getBlockIndex(
@@ -538,11 +589,94 @@ function finishDragging() {
     }
 
 
-    // ---------------------------------------------
-    // MOVE
-    // ---------------------------------------------
+    // =============================================
+    // DROP TOOLBOX BLOCK
+    // =============================================
 
-    else if (dropIndex !== null) {
+    else if (
+        dragSource === "toolbox" &&
+        dropIndex !== null
+    ) {
+
+        let newBlock;
+
+
+        // -----------------------------------------
+        // Text block
+        // -----------------------------------------
+
+        if (
+            draggedToolType === "text"
+        ) {
+
+            const value =
+                prompt(
+                    "Enter your text:"
+                );
+
+
+            if (
+                value !== null &&
+                value.trim() !== ""
+            ) {
+
+                newBlock = {
+
+                    id: nextBlockID++,
+
+                    type: "text",
+
+                    value: value
+
+                };
+
+            }
+
+        }
+
+
+        // -----------------------------------------
+        // Word block
+        // -----------------------------------------
+
+        else {
+
+            newBlock = {
+
+                id: nextBlockID++,
+
+                type: draggedToolType
+
+            };
+
+        }
+
+
+        // -----------------------------------------
+        // Insert new block
+        // -----------------------------------------
+
+        if (newBlock) {
+
+            sentence.splice(
+                dropIndex,
+                0,
+                newBlock
+            );
+
+        }
+
+    }
+
+
+    // =============================================
+    // MOVE EXISTING SENTENCE BLOCK
+    // =============================================
+
+    else if (
+        dragSource === "sentence" &&
+        dropIndex !== null
+    ) {
 
         const from =
             getBlockIndex(
@@ -562,9 +696,6 @@ function finishDragging() {
             let to = dropIndex;
 
 
-            // Removing the block changes
-            // the indexes after it.
-
             if (from < to) {
 
                 to--;
@@ -583,9 +714,9 @@ function finishDragging() {
     }
 
 
-    // ---------------------------------------------
-    // Clean up
-    // ---------------------------------------------
+    // =============================================
+    // CLEAN UP
+    // =============================================
 
     if (dragGhost) {
 
@@ -597,6 +728,10 @@ function finishDragging() {
     dragGhost = null;
 
     draggedBlockID = null;
+
+    draggedToolType = null;
+
+    dragSource = null;
 
     isDragging = false;
 
@@ -612,6 +747,9 @@ function finishDragging() {
     sentenceArea.classList.remove(
         "sentenceHover"
     );
+
+
+    hideDropIndicator();
 
 
     document.body.style.userSelect =
@@ -786,6 +924,56 @@ const tools =
     document.querySelectorAll(
         ".tool"
     );
+
+
+tools.forEach(function(tool) {
+
+    // ---------------------------------------------
+    // Click
+    // ---------------------------------------------
+
+    tool.addEventListener(
+        "click",
+        function() {
+
+            const type =
+                tool.dataset.type;
+
+
+            if (type === "text") {
+
+                addTextBlock();
+
+            }
+
+            else {
+
+                addWordBlock(type);
+
+            }
+
+        }
+    );
+
+
+    // ---------------------------------------------
+    // Drag
+    // ---------------------------------------------
+
+    tool.addEventListener(
+        "pointerdown",
+        function(event) {
+
+            startToolDragging(
+                event,
+                tool.dataset.type,
+                tool
+            );
+
+        }
+    );
+
+});
 
 
 tools.forEach(function(tool) {
