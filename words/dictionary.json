@@ -36,5 +36,15 @@
         "build",
         "dance",
         "explode"
+    ],
+    "Animal": [
+        "dog",
+        "cat",
+        "elephant",
+        "lion",
+        "tiger",
+        "penguin",
+        "shark",
+        "dragon"
     ]
 }
