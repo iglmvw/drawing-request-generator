@@ -2,6 +2,12 @@ let draggedIndex = null;
 
 const sentence = [];
 
+let draggedIndex = null;
+
+let dragElement = null;
+
+let isDragging = false;
+
 const adjectives = [
     "happy",
     "angry",
@@ -72,43 +78,14 @@ function drawSentence(){
 
     const area = document.getElementById("sentence");
 
-    area.addEventListener("dragover", function(event){
-
-        event.preventDefault();
-    
-    });
-
-    area.addEventListener("drop", function(){
-
-        if(draggedIndex === null){
-            return;
-        }
-    
-        const block = sentence.splice(draggedIndex,1)[0];
-    
-        sentence.push(block);
-    
-        draggedIndex = null;
-    
-        drawSentence();
-    
-    });
-
     area.innerHTML = "";
 
     sentence.forEach(function(block, index){
 
         const div = document.createElement("div");
 
-        div.draggable = true;
-
         div.className = "block";
 
-        div.addEventListener("dragstart", function(){
-
-            draggedIndex = index;
-        
-        });
 
         if(block.type=="text"){
 
