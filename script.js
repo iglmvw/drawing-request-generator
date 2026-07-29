@@ -30,30 +30,17 @@ let isOverDeleteZone = false;
 // DICTIONARY
 // =====================================================
 
-const adjectives = [
-    "happy",
-    "angry",
-    "tiny",
-    "purple",
-    "fluffy"
-];
+let dictionary = {};
 
-const nouns = [
-    "dog",
-    "dragon",
-    "banana",
-    "robot",
-    "pirate"
-];
+async function loadDictionary() {
 
-const verbs = [
-    "eat",
-    "throw",
-    "hug",
-    "kick",
-    "admire"
-];
+    const response =
+        await fetch("words/dictionary.json");
 
+    dictionary =
+        await response.json();
+
+}
 
 // =====================================================
 // UTILITY FUNCTIONS
@@ -868,41 +855,44 @@ function generateSentence() {
     sentence.forEach(function(block) {
 
         switch (block.type) {
-
+        
             case "text":
-
+        
                 result +=
                     block.value + " ";
-
+        
                 break;
-
-
+        
+        
             case "adjective":
-
+        
                 result +=
-                    randomWord(adjectives) +
-                    " ";
-
+                    randomWord(
+                        dictionary["Adjective"]
+                    ) + " ";
+        
                 break;
-
-
+        
+        
             case "noun":
-
+        
                 result +=
-                    randomWord(nouns) +
-                    " ";
-
+                    randomWord(
+                        dictionary["Noun"]
+                    ) + " ";
+        
                 break;
-
-
+        
+        
             case "verb":
-
+        
                 result +=
-                    randomWord(verbs) +
-                    " ";
-
+                    randomWord(
+                        dictionary["Verb"]
+                    ) + " ";
+        
                 break;
-
+        
         }
 
     });
@@ -1056,4 +1046,12 @@ document.addEventListener(
 // INITIALIZATION
 // =====================================================
 
-drawSentence();
+async function initialize() {
+
+    await loadDictionary();
+
+    drawSentence();
+
+}
+
+initialize();
