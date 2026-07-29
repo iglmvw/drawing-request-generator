@@ -42,6 +42,50 @@ async function loadDictionary() {
 
 }
 
+function createDictionaryTools() {
+
+    const container =
+        document.getElementById(
+            "dictionaryTools"
+        );
+
+
+    container.innerHTML = "";
+
+
+    Object.keys(dictionary).forEach(
+        function(category) {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.className =
+                "tool";
+
+
+            button.dataset.type =
+                category;
+
+
+            button.textContent =
+                category;
+
+
+            container.appendChild(
+                button
+            );
+
+
+            setupToolButton(button);
+
+        }
+    );
+
+}
+
 // =====================================================
 // UTILITY FUNCTIONS
 // =====================================================
@@ -65,6 +109,54 @@ function getBlockIndex(id) {
 
 }
 
+function setupToolButton(tool) {
+
+    // =============================================
+    // Click
+    // =============================================
+
+    tool.addEventListener(
+        "click",
+        function() {
+
+            const type =
+                tool.dataset.type;
+
+
+            if (type === "text") {
+
+                addTextBlock();
+
+            }
+
+            else {
+
+                addWordBlock(type);
+
+            }
+
+        }
+    );
+
+
+    // =============================================
+    // Drag
+    // =============================================
+
+    tool.addEventListener(
+        "pointerdown",
+        function(event) {
+
+            startToolDragging(
+                event,
+                tool.dataset.type,
+                tool
+            );
+
+        }
+    );
+
+}
 
 // =====================================================
 // DRAWING
@@ -854,45 +946,35 @@ function generateSentence() {
 
     sentence.forEach(function(block) {
 
-        switch (block.type) {
-        
-            case "text":
-        
-                result +=
-                    block.value + " ";
-        
-                break;
-        
-        
-            case "adjective":
-        
-                result +=
-                    randomWord(
-                        dictionary["Adjective"]
-                    ) + " ";
-        
-                break;
-        
-        
-            case "noun":
-        
-                result +=
-                    randomWord(
-                        dictionary["Noun"]
-                    ) + " ";
-        
-                break;
-        
-        
-            case "verb":
-        
-                result +=
-                    randomWord(
-                        dictionary["Verb"]
-                    ) + " ";
-        
-                break;
-        
+        // =========================================
+        // Normal text
+        // =========================================
+
+        if (block.type === "text") {
+
+            result +=
+                block.value + " ";
+
+            return;
+
+        }
+
+
+        // =========================================
+        // Dictionary category
+        // =========================================
+
+        if (
+            dictionary[block.type]
+        ) {
+
+            result +=
+                randomWord(
+                    dictionary[block.type]
+                ) + " ";
+
+            return;
+
         }
 
     });
@@ -909,61 +991,6 @@ function generateSentence() {
 // =====================================================
 // EVENT LISTENERS
 // =====================================================
-
-const tools =
-    document.querySelectorAll(
-        ".tool"
-    );
-
-
-tools.forEach(function(tool) {
-
-    // ---------------------------------------------
-    // Click
-    // ---------------------------------------------
-
-    tool.addEventListener(
-        "click",
-        function() {
-
-            const type =
-                tool.dataset.type;
-
-
-            if (type === "text") {
-
-                addTextBlock();
-
-            }
-
-            else {
-
-                addWordBlock(type);
-
-            }
-
-        }
-    );
-
-
-    // ---------------------------------------------
-    // Drag
-    // ---------------------------------------------
-
-    tool.addEventListener(
-        "pointerdown",
-        function(event) {
-
-            startToolDragging(
-                event,
-                tool.dataset.type,
-                tool
-            );
-
-        }
-    );
-
-});
 
 
 tools.forEach(function(tool) {
@@ -1049,6 +1076,14 @@ document.addEventListener(
 async function initialize() {
 
     await loadDictionary();
+
+    createDictionaryTools();
+
+    setupToolButton(
+        document.querySelector(
+            '[data-type="text"]'
+        )
+    );
 
     drawSentence();
 
