@@ -1,1 +1,40 @@
+{
+    "Adjective": [
+        "happy",
+        "angry",
+        "tiny",
+        "purple",
+        "fluffy",
+        "gigantic",
+        "strange",
+        "silly",
+        "brave",
+        "ancient"
+    ],
 
+    "Noun": [
+        "dog",
+        "dragon",
+        "banana",
+        "robot",
+        "pirate",
+        "castle",
+        "spaceship",
+        "wizard",
+        "elephant",
+        "sandwich"
+    ],
+
+    "Verb": [
+        "eat",
+        "throw",
+        "hug",
+        "kick",
+        "admire",
+        "chase",
+        "destroy",
+        "build",
+        "dance",
+        "explode"
+    ]
+}
