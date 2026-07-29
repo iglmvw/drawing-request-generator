@@ -76,6 +76,16 @@ function drawSentence() {
 
     area.innerHTML = "";
 
+    if(dropIndex === 0){
+    
+        const indicator = document.createElement("div");
+    
+        indicator.className = "dropIndicator";
+    
+        area.appendChild(indicator);
+    
+    }
+
     sentence.forEach(function (block, index) {
 
         const div = document.createElement("div");
@@ -108,6 +118,16 @@ function drawSentence() {
         });
 
         area.appendChild(div);
+        
+        if(dropIndex === index + 1){
+        
+            const indicator = document.createElement("div");
+        
+            indicator.className = "dropIndicator";
+        
+            area.appendChild(indicator);
+        
+        }
 
     });
 
@@ -124,9 +144,34 @@ function moveBlock(event) {
 
     dragElement.style.left = (event.clientX - 40) + "px";
     dragElement.style.top = (event.clientY - 20) + "px";
+    updateDropIndex(event);
+    drawSentence();
 
 }
 
+function updateDropIndex(event){
+
+    const blocks =
+        document.querySelectorAll(".block");
+
+    dropIndex = sentence.length;
+
+    blocks.forEach(function(block,index){
+
+        const rect = block.getBoundingClientRect();
+
+        const center =
+            rect.left + rect.width/2;
+
+        if(event.clientX < center && dropIndex===sentence.length){
+
+            dropIndex = index;
+
+        }
+
+    });
+
+}
 
 // =====================================================
 // SENTENCE EDITING
@@ -244,16 +289,35 @@ document.getElementById("generateButton").addEventListener("click", function () 
 document.addEventListener("pointermove", moveBlock);
 
 
-document.addEventListener("pointerup", function () {
+document.addEventListener("pointerup",function(){
 
-    if (!isDragging) return;
+    if(!isDragging)
+        return;
 
-    isDragging = false;
+    isDragging=false;
 
-    dragElement.style.position = "";
-    dragElement.style.left = "";
-    dragElement.style.top = "";
-    dragElement.style.zIndex = "";
+    const from =
+        getBlockIndex(draggedBlockID);
+
+    const block =
+        sentence.splice(from,1)[0];
+
+    let to = dropIndex;
+
+    if(from < to){
+
+        to--;
+
+    }
+
+    sentence.splice(to,0,block);
+
+    dragElement.style.position="";
+    dragElement.style.left="";
+    dragElement.style.top="";
+    dragElement.style.zIndex="";
+
+    dropIndex=null;
 
     drawSentence();
 
