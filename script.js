@@ -1,12 +1,25 @@
-let draggedIndex = null;
+// =====================================================
+// DATA
+// =====================================================
+
+// This array stores the sentence being built.
+// It is the "source of truth" for our application.
+// Corny-ahh comment
 
 const sentence = [];
 
-let draggedIndex = null;
+let nextBlockID = 1;
 
+// Variables used while dragging blocks.
+let draggedBlockID = null;
 let dragElement = null;
-
 let isDragging = false;
+let dropIndex = null;
+
+
+// =====================================================
+// DICTIONARY
+// =====================================================
 
 const adjectives = [
     "happy",
@@ -32,72 +45,67 @@ const verbs = [
     "admire"
 ];
 
-const tools = document.querySelectorAll(".tool");
 
-tools.forEach(function(tool){
+// =====================================================
+// UTILITY FUNCTIONS
+// =====================================================
 
-    tool.addEventListener("click", function(){
+function randomWord(list) {
 
-        const type = tool.dataset.type;
-
-        if(type == "text"){
-
-            const value = prompt("Enter your text:");
-
-            if(value === null || value.trim() === ""){
-                return;
-            }
-
-            sentence.push({
-                type:"text",
-                value:value
-            });
-
-        }
-        else{
-
-            sentence.push({
-                type:type
-            });
-
-        }
-
-        drawSentence();
-
-    });
-
-});
-
-function randomWord(list){
-
-    return list[Math.floor(Math.random()*list.length)];
+    return list[Math.floor(Math.random() * list.length)];
 
 }
 
-function drawSentence(){
+function getBlockIndex(id) {
+
+    return sentence.findIndex(function(block) {
+
+        return block.id === id;
+
+    });
+
+}
+
+// =====================================================
+// DRAWING FUNCTIONS
+// =====================================================
+
+function drawSentence() {
 
     const area = document.getElementById("sentence");
 
     area.innerHTML = "";
 
-    sentence.forEach(function(block, index){
+    sentence.forEach(function (block, index) {
 
         const div = document.createElement("div");
 
         div.className = "block";
 
-
-        if(block.type=="text"){
+        if (block.type === "text") {
 
             div.classList.add("textBlock");
-            div.textContent = block.value;
+            div.textContent = block.value + " (" + block.id + ")";
+
+        } else {
+
+            div.textContent = "[" + block.type + " #" + block.id + "]";
 
         }
-        else{
 
-            div.textContent = "["+block.type+"]";
+        // Drag begins here
+        div.addEventListener("pointerdown", function (event) {
 
-        }
+            draggedBlockID = block.id;
+            dragElement = div;
+            isDragging = true;
+
+            div.style.position = "fixed";
+            div.style.zIndex = "1000";
+
+            moveBlock(event);
+
+        });
 
         area.appendChild(div);
 
@@ -105,38 +113,155 @@ function drawSentence(){
 
 }
 
-document.getElementById("generateButton").addEventListener("click", function(){
+
+// =====================================================
+// DRAGGING
+// =====================================================
+
+function moveBlock(event) {
+
+    if (!isDragging) return;
+
+    dragElement.style.left = (event.clientX - 40) + "px";
+    dragElement.style.top = (event.clientY - 20) + "px";
+
+}
+
+
+// =====================================================
+// SENTENCE EDITING
+// =====================================================
+
+function addTextBlock() {
+
+    const value = prompt("Enter your text:");
+
+    if (value === null) return;
+
+    if (value.trim() === "") return;
+
+    sentence.push({
+    
+        id: nextBlockID++,
+    
+        type: "text",
+    
+        value: value
+    
+    });
+
+    drawSentence();
+
+}
+
+
+function addWordBlock(type) {
+
+    sentence.push({
+    
+        id: nextBlockID++,
+    
+        type: type
+    
+    });
+
+    drawSentence();
+
+}
+
+
+// =====================================================
+// SENTENCE GENERATION
+// =====================================================
+
+function generateSentence() {
 
     let result = "";
 
-    sentence.forEach(function(block){
+    sentence.forEach(function (block) {
 
-        if(block.type=="text"){
+        switch (block.type) {
 
-            result += block.value + " ";
+            case "text":
+                result += block.value + " ";
+                break;
 
-        }
+            case "adjective":
+                result += randomWord(adjectives) + " ";
+                break;
 
-        if(block.type=="adjective"){
+            case "noun":
+                result += randomWord(nouns) + " ";
+                break;
 
-            result += randomWord(adjectives) + " ";
-
-        }
-
-        if(block.type=="noun"){
-
-            result += randomWord(nouns) + " ";
-
-        }
-
-        if(block.type=="verb"){
-
-            result += randomWord(verbs) + " ";
+            case "verb":
+                result += randomWord(verbs) + " ";
+                break;
 
         }
 
     });
 
-    document.getElementById("output").textContent = result;
+    document.getElementById("output").textContent = result.trim();
+
+}
+
+
+// =====================================================
+// EVENT LISTENERS
+// =====================================================
+
+const tools = document.querySelectorAll(".tool");
+
+tools.forEach(function (tool) {
+
+    tool.addEventListener("click", function () {
+
+        const type = tool.dataset.type;
+
+        if (type === "text") {
+
+            addTextBlock();
+
+        } else {
+
+            addWordBlock(type);
+
+        }
+
+    });
 
 });
+
+
+document.getElementById("generateButton").addEventListener("click", function () {
+
+    generateSentence();
+
+});
+
+
+document.addEventListener("pointermove", moveBlock);
+
+
+document.addEventListener("pointerup", function () {
+
+    if (!isDragging) return;
+
+    isDragging = false;
+
+    dragElement.style.position = "";
+    dragElement.style.left = "";
+    dragElement.style.top = "";
+    dragElement.style.zIndex = "";
+
+    drawSentence();
+
+});
+
+
+// =====================================================
+// INITIALIZATION
+// =====================================================
+
+drawSentence();
