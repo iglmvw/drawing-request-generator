@@ -87,24 +87,13 @@ function drawSentence() {
     area.innerHTML = "";
 
 
-    // Draw indicator at the beginning
-
-    if (dropIndex === 0 && isDragging) {
-
-        createDropIndicator(area);
-
-    }
-
-
-    sentence.forEach(function(block, index) {
+    sentence.forEach(function(block) {
 
         const div =
             document.createElement("div");
 
         div.className = "block";
 
-
-        // Text block
 
         if (block.type === "text") {
 
@@ -114,9 +103,6 @@ function drawSentence() {
 
         }
 
-
-        // Word block
-
         else {
 
             div.textContent =
@@ -125,21 +111,9 @@ function drawSentence() {
         }
 
 
-        // Don't display the block being dragged
+        div.dataset.blockId =
+            block.id;
 
-        // in its normal location.
-
-        if (
-            isDragging &&
-            block.id === draggedBlockID
-        ) {
-
-            div.style.visibility = "hidden";
-
-        }
-
-
-        // Start dragging
 
         div.addEventListener(
             "pointerdown",
@@ -157,24 +131,28 @@ function drawSentence() {
 
         area.appendChild(div);
 
-
-        // Draw insertion indicator
-
-        if (
-            isDragging &&
-            dropIndex === index + 1
-        ) {
-
-            createDropIndicator(area);
-
-        }
-
     });
+
+
+    createDropIndicator();
 
 }
 
 
-function createDropIndicator(area) {
+function createDropIndicator() {
+
+    const oldIndicator =
+        document.querySelector(
+            ".dropIndicator"
+        );
+
+
+    if (oldIndicator) {
+
+        oldIndicator.remove();
+
+    }
+
 
     const indicator =
         document.createElement("div");
@@ -182,10 +160,80 @@ function createDropIndicator(area) {
     indicator.className =
         "dropIndicator";
 
-    area.appendChild(indicator);
+    indicator.style.display =
+        "none";
+
+
+    document
+        .getElementById("sentence")
+        .appendChild(indicator);
 
 }
 
+function moveDropIndicator(index) {
+
+    const indicator =
+        document.querySelector(
+            ".dropIndicator"
+        );
+
+
+    if (!indicator) {
+
+        return;
+
+    }
+
+
+    const area =
+        document.getElementById(
+            "sentence"
+        );
+
+
+    const blocks =
+        area.querySelectorAll(
+            ".block"
+        );
+
+
+    indicator.style.display =
+        "inline-block";
+
+
+    if (index >= blocks.length) {
+
+        area.appendChild(indicator);
+
+    }
+
+    else {
+
+        area.insertBefore(
+            indicator,
+            blocks[index]
+        );
+
+    }
+
+}
+
+function hideDropIndicator() {
+
+    const indicator =
+        document.querySelector(
+            ".dropIndicator"
+        );
+
+
+    if (indicator) {
+
+        indicator.style.display =
+            "none";
+
+    }
+
+}
 
 // =====================================================
 // DRAGGING
@@ -233,12 +281,7 @@ function startDragging(
     // Move the ghost immediately
 
     moveGhost(event);
-
-
-    // Draw sentence with hidden original
-
-    drawSentence();
-
+    
 
     // Prevent browser scrolling while dragging
 
@@ -296,9 +339,9 @@ function updateDropLocation(event) {
         );
 
 
-    // ---------------------------------------------
-    // Check whether we're over the delete zone
-    // ---------------------------------------------
+    // =============================================
+    // Check DELETE zone
+    // =============================================
 
     const deleteRect =
         deleteZone.getBoundingClientRect();
@@ -321,16 +364,16 @@ function updateDropLocation(event) {
             "sentenceHover"
         );
 
-        dropIndex = null;
-
-        drawSentence();
+        hideDropIndicator();
 
         return;
 
     }
 
 
-    // We're not over delete anymore
+    // =============================================
+    // We're no longer over DELETE
+    // =============================================
 
     isOverDeleteZone = false;
 
@@ -339,9 +382,9 @@ function updateDropLocation(event) {
     );
 
 
-    // ---------------------------------------------
-    // Check whether we're over the sentence
-    // ---------------------------------------------
+    // =============================================
+    // Check SENTENCE area
+    // =============================================
 
     const sentenceRect =
         sentenceArea.getBoundingClientRect();
@@ -360,9 +403,9 @@ function updateDropLocation(event) {
             "sentenceHover"
         );
 
-        dropIndex = null;
+        hideDropIndicator();
 
-        drawSentence();
+        dropIndex = null;
 
         return;
 
@@ -374,9 +417,9 @@ function updateDropLocation(event) {
     );
 
 
-    // ---------------------------------------------
-    // Find closest insertion point
-    // ---------------------------------------------
+    // =============================================
+    // Find insertion point
+    // =============================================
 
     const blocks =
         sentenceArea.querySelectorAll(
@@ -384,31 +427,37 @@ function updateDropLocation(event) {
         );
 
 
-    dropIndex = sentence.length;
+    let newDropIndex =
+        blocks.length;
 
 
-    blocks.forEach(function(
-        element,
-        index
+    for (
+        let i = 0;
+        i < blocks.length;
+        i++
     ) {
 
+        const block =
+            blocks[i];
+
+
         const blockID =
-            sentence[index].id;
+            Number(block.dataset.blockId);
 
 
-        // Don't consider the block we're dragging
+        // Don't use the block being dragged
 
         if (
             blockID === draggedBlockID
         ) {
 
-            return;
+            continue;
 
         }
 
 
         const rect =
-            element.getBoundingClientRect();
+            block.getBoundingClientRect();
 
 
         const center =
@@ -417,18 +466,25 @@ function updateDropLocation(event) {
 
 
         if (
-            event.clientX < center &&
-            dropIndex === sentence.length
+            event.clientX < center
         ) {
 
-            dropIndex = index;
+            newDropIndex = i;
+
+            break;
 
         }
 
-    });
+    }
 
 
-    drawSentence();
+    dropIndex =
+        newDropIndex;
+
+
+    moveDropIndicator(
+        dropIndex
+    );
 
 }
 
