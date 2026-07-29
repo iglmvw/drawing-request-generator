@@ -9,60 +9,134 @@ body{
     cursor:pointer;
 }
 
-#sentence{
-    min-height:80px;
-    border:2px dashed gray;
-    padding:10px;
+#sentence {
+
+    min-height: 80px;
+
+    border: 2px dashed gray;
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    transition: background 0.15s;
 }
 
-.block{
 
-    display:inline-block;
+/* Blocks */
 
-    padding:8px 12px;
+.block {
 
-    margin:5px;
+    display: inline-block;
 
-    border-radius:6px;
+    padding: 8px 12px;
 
-    background:#dddddd;
+    margin: 5px;
 
-    cursor:grab;
+    border-radius: 6px;
 
-    user-select:none;
+    background: #dddddd;
 
-    transition:
-        transform .15s;
-}
+    cursor: grab;
 
-.block:hover{
-
-    transform:scale(1.05);
+    user-select: none;
 
 }
 
-.block:active{
-    cursor:grabbing;
-}
 
-.dropIndicator{
+.block:hover {
 
-    display:inline-block;
-
-    width:4px;
-
-    height:36px;
-
-    background:#2196f3;
-
-    border-radius:2px;
-
-    vertical-align:middle;
-
-    margin:4px;
+    transform: scale(1.05);
 
 }
-.textBlock{
-    background:#ffffff;
-    border:1px solid black;
+
+
+/* Floating ghost */
+
+.dragGhost {
+
+    position: fixed;
+
+    pointer-events: none;
+
+    z-index: 10000;
+
+    opacity: 0.75;
+
+    transform: scale(1.05);
+
+    box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+
+}
+
+
+/* The place where a block will be inserted */
+
+.dropIndicator {
+
+    display: inline-block;
+
+    width: 4px;
+
+    height: 36px;
+
+    background: #2196f3;
+
+    border-radius: 2px;
+
+    vertical-align: middle;
+
+    margin: 4px;
+}
+
+
+/* Delete area */
+
+#deleteZone {
+
+    margin-top: 15px;
+
+    padding: 20px;
+
+    text-align: center;
+
+    border: 2px dashed #999;
+
+    border-radius: 8px;
+
+    color: #666;
+
+    user-select: none;
+
+}
+
+
+/* Highlight delete area */
+
+#deleteZone.deleteHover {
+
+    background: #ffdddd;
+
+    border-color: red;
+
+    color: red;
+
+}
+
+
+/* Highlight sentence when dragging */
+
+#sentence.sentenceHover {
+
+    background: #f5f5f5;
+
+}
+
+
+/* Clear button */
+
+#clearButton {
+
+    margin-right: 10px;
+
 }
