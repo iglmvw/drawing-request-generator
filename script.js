@@ -993,34 +993,6 @@ function generateSentence() {
 // =====================================================
 
 
-tools.forEach(function(tool) {
-
-    tool.addEventListener(
-        "click",
-        function() {
-
-            const type =
-                tool.dataset.type;
-
-
-            if (type === "text") {
-
-                addTextBlock();
-
-            }
-
-            else {
-
-                addWordBlock(type);
-
-            }
-
-        }
-    );
-
-});
-
-
 // Generate button
 
 document
