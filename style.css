@@ -87,6 +87,12 @@ body{
     vertical-align: middle;
 
     margin: 4px;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.1s;
+
 }
 
 
