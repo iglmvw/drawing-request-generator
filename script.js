@@ -1084,6 +1084,149 @@ function generateSentence() {
 
 }
 
+function createSurpriseSentence() {
+
+    const available =
+        Object.keys(dictionary);
+
+
+    if (available.length === 0) {
+
+        return;
+
+    }
+
+
+    sentence = [];
+
+
+    const patterns = [
+
+        [
+            "Adjective",
+            "Noun",
+            "Verb"
+        ],
+
+        [
+            "Pronoun",
+            "Verb",
+            "Noun"
+        ],
+
+        [
+            "Adjective",
+            "Noun",
+            "Verb",
+            "Adverb"
+        ],
+
+        [
+            "Noun",
+            "Verb",
+            "Preposition",
+            "Noun"
+        ],
+
+        [
+            "Adjective",
+            "Noun",
+            "Past Tense",
+            "Noun"
+        ],
+
+        [
+            "Pronoun",
+            "Verb",
+            "Adverb"
+        ],
+
+        [
+            "Interjection",
+            "Adjective",
+            "Noun",
+            "Verb"
+        ]
+
+    ];
+
+
+    // Pick a random pattern
+
+    let pattern =
+        patterns[
+            Math.floor(
+                Math.random() *
+                patterns.length
+            )
+        ];
+
+
+    // Only use categories that
+    // actually exist in the dictionary.
+
+    pattern =
+        pattern.filter(
+            function(category) {
+
+                return available.includes(
+                    category
+                );
+
+            }
+        );
+
+
+    // Convert the pattern
+    // into sentence blocks.
+
+    pattern.forEach(
+        function(category) {
+
+            sentence.push({
+
+                type: category
+
+            });
+
+        }
+    );
+
+
+    drawSentence();
+
+    generateSentence();
+
+}
+
+function trySurpriseVideo() {
+
+    const chance =
+        Math.floor(
+            Math.random() * 10
+        );
+
+
+    if (chance !== 0) {
+
+        return;
+
+    }
+
+
+    const video =
+        document.getElementById(
+            "surpriseVideo"
+        );
+
+
+    video.hidden = false;
+
+    video.currentTime = 0;
+
+    video.play();
+
+}
 
 // =====================================================
 // EVENT LISTENERS
@@ -1182,6 +1325,23 @@ customCategoryFile.addEventListener(
         // file again later.
 
         customCategoryFile.value = "";
+
+    }
+);
+
+const surpriseButton =
+    document.getElementById(
+        "surpriseButton"
+    );
+
+
+surpriseButton.addEventListener(
+    "click",
+    function() {
+
+        createSurpriseSentence();
+
+        trySurpriseVideo();
 
     }
 );
