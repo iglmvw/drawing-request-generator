@@ -1222,9 +1222,29 @@ function trySurpriseVideo() {
 
     video.hidden = false;
 
+    video.style.display = "block";
+
     video.currentTime = 0;
 
-    video.play();
+
+    const playPromise =
+        video.play();
+
+
+    if (playPromise !== undefined) {
+
+        playPromise.catch(
+            function(error) {
+
+                console.error(
+                    "Video playback failed:",
+                    error
+                );
+
+            }
+        );
+
+    }
 
 }
 
