@@ -86,6 +86,103 @@ function createDictionaryTools() {
 
 }
 
+function loadCustomCategory(file) {
+
+    return new Promise(function(resolve, reject) {
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            function(event) {
+
+                const text =
+                    event.target.result;
+
+
+                const words =
+                    text
+                        .split(/\r?\n/)
+                        .map(function(word) {
+
+                            return word.trim();
+
+                        })
+                        .filter(function(word) {
+
+                            return word.length > 0;
+
+                        });
+
+
+                resolve(words);
+
+            };
+
+
+        reader.onerror =
+            function() {
+
+                reject(
+                    new Error(
+                        "Could not read file."
+                    )
+                );
+
+            };
+
+
+        reader.readAsText(file);
+
+    });
+
+}
+
+function getCategoryName(file) {
+
+    return file.name
+        .replace(/\.txt$/i, "")
+        .trim();
+
+}
+
+async function addCustomCategory(file) {
+
+    const category =
+        getCategoryName(file);
+
+
+    if (!category) {
+
+        return;
+
+    }
+
+
+    const words =
+        await loadCustomCategory(file);
+
+
+    if (words.length === 0) {
+
+        alert(
+            "This file does not contain any words."
+        );
+
+        return;
+
+    }
+
+
+    dictionary[category] =
+        words;
+
+
+    createDictionaryTools();
+
+}
+
 // =====================================================
 // UTILITY FUNCTIONS
 // =====================================================
@@ -1040,6 +1137,54 @@ document.addEventListener(
     }
 );
 
+const customCategoryButton =
+    document.getElementById(
+        "customCategoryButton"
+    );
+
+
+const customCategoryFile =
+    document.getElementById(
+        "customCategoryFile"
+    );
+
+
+customCategoryButton.addEventListener(
+    "click",
+    function() {
+
+        customCategoryFile.click();
+
+    }
+);
+
+
+customCategoryFile.addEventListener(
+    "change",
+    async function() {
+
+        const files =
+            Array.from(
+                customCategoryFile.files
+            );
+
+
+        for (const file of files) {
+
+            await addCustomCategory(
+                file
+            );
+
+        }
+
+
+        // Allow selecting the same
+        // file again later.
+
+        customCategoryFile.value = "";
+
+    }
+);
 
 // =====================================================
 // INITIALIZATION
