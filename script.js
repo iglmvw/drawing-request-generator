@@ -1097,7 +1097,7 @@ function createSurpriseSentence() {
     }
 
 
-    sentence = [];
+    sentence.length = 0;
 
 
     const patterns = [
