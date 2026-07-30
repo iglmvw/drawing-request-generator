@@ -64,12 +64,26 @@
 
 <p id="output"></p>
 
-<video
-    id="surpriseVideo"
-    src="videos/surprise.mp4"
-    controls
+<div
+    id="surpriseOverlay"
     hidden>
-</video>
+
+    <div id="surpriseVideoContainer">
+
+        <button
+            id="closeSurpriseVideo">
+            ×
+        </button>
+
+        <video
+            id="surpriseVideo"
+            src="videos/surprise.mp4"
+            controls>
+        </video>
+
+    </div>
+
+</div>
 
 <script src="script.js"></script>
 
