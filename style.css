@@ -146,3 +146,32 @@ body{
     margin-right: 10px;
 
 }
+
+#surpriseOverlay {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    z-index: 99999;
+
+    pointer-events: none;
+}
+
+
+#surpriseFrame {
+    width: 100vw;
+    height: 100vh;
+
+    object-fit: contain;
+
+    pointer-events: none;
+}
