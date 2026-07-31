@@ -6,6 +6,7 @@ const sentence = [];
 
 let nextBlockID = 1;
 
+let surpriseAnimationPlaying = false;
 
 // =====================================================
 // DRAGGING STATE
@@ -1199,13 +1200,143 @@ function createSurpriseSentence() {
 
 }
 
-function trySurpriseVideo() {
+function playSurpriseAnimation() {
+
+    if (surpriseAnimationPlaying) {
+
+        return;
+
+    }
+
+
+    surpriseAnimationPlaying = true;
+
+
+    const overlay =
+        document.getElementById(
+            "surpriseOverlay"
+        );
+
+
+    const frame =
+        document.getElementById(
+            "surpriseFrame"
+        );
+
+
+    const audio =
+        document.getElementById(
+            "surpriseAudio"
+        );
+
+
+    const totalFrames = 27;
+
+    const frameRate = 29.97;
+
+    const frameDuration =
+        1000 / frameRate;
+
+
+    let currentFrame = 1;
+
+    let lastTime = null;
+
+
+    overlay.hidden = false;
+
+
+    audio.currentTime = 0;
+
+    audio.play().catch(
+        function(error) {
+
+            console.error(
+                "Could not play surprise audio:",
+                error
+            );
+
+        }
+    );
+
+
+    function animate(time) {
+
+        if (lastTime === null) {
+
+            lastTime = time;
+
+        }
+
+
+        const elapsed =
+            time - lastTime;
+
+
+        if (elapsed >= frameDuration) {
+
+            const framesToAdvance =
+                Math.floor(
+                    elapsed /
+                    frameDuration
+                );
+
+
+            currentFrame +=
+                framesToAdvance;
+
+
+            lastTime +=
+                framesToAdvance *
+                frameDuration;
+
+        }
+
+
+        if (currentFrame > totalFrames) {
+
+            overlay.hidden = true;
+
+            frame.src = "";
+
+            surpriseAnimationPlaying = false;
+
+            return;
+
+        }
+
+
+        const frameNumber =
+            String(currentFrame)
+                .padStart(4, "0");
+
+
+        frame.src =
+            `animation/frame${frameNumber}.png`;
+
+
+        requestAnimationFrame(
+            animate
+        );
+
+    }
+
+
+    requestAnimationFrame(
+        animate
+    );
+
+}
+
+function trySurpriseAnimation() {
 
     const chance =
         Math.floor(
             Math.random() * 10
         );
 
+
+    // 0 = 1/10 chance
 
     if (chance !== 0) {
 
@@ -1214,37 +1345,7 @@ function trySurpriseVideo() {
     }
 
 
-    const video =
-        document.getElementById(
-            "surpriseVideo"
-        );
-
-
-    video.hidden = false;
-
-    video.style.display = "block";
-
-    video.currentTime = 0;
-
-
-    const playPromise =
-        video.play();
-
-
-    if (playPromise !== undefined) {
-
-        playPromise.catch(
-            function(error) {
-
-                console.error(
-                    "Video playback failed:",
-                    error
-                );
-
-            }
-        );
-
-    }
+    playSurpriseAnimation();
 
 }
 
@@ -1361,10 +1462,37 @@ surpriseButton.addEventListener(
 
         createSurpriseSentence();
 
-        trySurpriseVideo();
+        trySurpriseAnimation();
 
     }
 );
+
+function preloadSurpriseAnimation() {
+
+    const totalFrames = 27;
+
+
+    for (
+        let i = 1;
+        i <= totalFrames;
+        i++
+    ) {
+
+        const frameNumber =
+            String(i)
+                .padStart(4, "0");
+
+
+        const image =
+            new Image();
+
+
+        image.src =
+            `animation/frame${frameNumber}.png`;
+
+    }
+
+}
 
 // =====================================================
 // INITIALIZATION
@@ -1383,7 +1511,10 @@ async function initialize() {
     );
 
     drawSentence();
+    
+    preloadSurpriseAnimation();
 
 }
+
 
 initialize();
