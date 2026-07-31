@@ -1312,7 +1312,7 @@ function playSurpriseAnimation() {
 
 
         frame.src =
-            `animation/frame${frameNumber}.png`;
+            `assets/surpriseAnimation/frame${frameNumber}.png`;
 
 
         requestAnimationFrame(
@@ -1488,7 +1488,7 @@ function preloadSurpriseAnimation() {
 
 
         image.src =
-            `animation/frame${frameNumber}.png`;
+            `assets/surpriseAnimation/frame${frameNumber}.png`;
 
     }
 
